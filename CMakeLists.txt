@@ -42,5 +42,4 @@ target_link_libraries(Mixing_Assistant_Pro PRIVATE
     juce::juce_gui_extra
     PUBLIC
     juce::juce_recommended_config_flags
-    juce::juce_recommended_linter_flags
 )
