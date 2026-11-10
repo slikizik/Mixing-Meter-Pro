@@ -4,16 +4,26 @@
 Mixing_Assistant_ProAudioProcessorEditor::Mixing_Assistant_ProAudioProcessorEditor (Mixing_Assistant_ProAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p),
       webView (juce::WebBrowserComponent::Options()
-               .withBackend (juce::WebBrowserComponent::Options::Backend::webview2))
+               .withBackend (juce::WebBrowserComponent::Options::Backend::webview2)
+               .withResourceProvider ([] (const juce::String& url) -> std::optional<juce::WebBrowserComponent::Resource>
+               {
+                   // Intercept requests for the root or meter.html and serve the embedded binary data
+                   if (url == "/" || url == "/meter.html" || url == "meter.html")
+                   {
+                       return juce::WebBrowserComponent::Resource {
+                           (const std::byte*) BinaryData::meter_html,
+                           (size_t) BinaryData::meter_htmlSize,
+                           "text/html"
+                       };
+                   }
+                   return std::nullopt;
+               }, juce::URL("https://juce.backend")))
 {
     addAndMakeVisible (webView);
     setSize (920, 670);
 
-    auto htmlData = juce::String::createStringFromData (
-        BinaryData::meter_html,
-        BinaryData::meter_htmlSize
-    );
-    webView.goToURL (juce::WebBrowserComponent::getResourceProviderRoot() + "index.html");
+    // Request the correct embedded file name
+    webView.goToURL (juce::WebBrowserComponent::getResourceProviderRoot() + "meter.html");
 
     startTimerHz (60);
 }
