@@ -12,6 +12,8 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
+      with:
+        submodules: recursive  # <--- CRITICAL FOR VST3 SDK
 
     - name: Configure CMake
       run: cmake -B build -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=Release
@@ -23,4 +25,5 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: Mixing_Assistant_Pro_VST3
+        # Verify this path matches exactly where CMake outputs your .vst3 file
         path: build/Mixing_Assistant_Pro_artefacts/Release/VST3/
