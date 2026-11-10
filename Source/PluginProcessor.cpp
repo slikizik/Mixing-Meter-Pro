@@ -31,9 +31,9 @@ bool Mixing_Assistant_ProAudioProcessor::isBusesLayoutSupported (const BusesLayo
     if (layouts.getMainInputChannelSet() != juce::AudioChannelSet::stereo())
         return false;
 
-    if (auto* sc = layouts.getChannelSet (true, 1))
-        if (! sc->isDisabled() && *sc != juce::AudioChannelSet::stereo())
-            return false;
+    const auto sidechainSet = layouts.getChannelSet (true, 1);
+    if (! sidechainSet.isDisabled() && sidechainSet != juce::AudioChannelSet::stereo())
+        return false;
 
     return true;
 }
