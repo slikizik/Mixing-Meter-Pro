@@ -46,6 +46,7 @@ juce_add_binary_data(Mixing_Assistant_Pro_Data SOURCES
 
 target_link_libraries(Mixing_Assistant_Pro PRIVATE
     Mixing_Assistant_Pro_Data
+    juce::juce_dsp
     juce::juce_audio_utils
     juce::juce_gui_extra
     PUBLIC
