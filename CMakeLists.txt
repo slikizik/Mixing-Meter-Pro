@@ -24,6 +24,14 @@ juce_add_plugin(Mixing_Assistant_Pro
     PRODUCT_NAME "Mixing_Assistant_Pro"
 )
 
+# Ensure the generated JUCE header exists for all source files.
+# This is required for <JuceHeader.h> includes in the plugin sources.
+juce_generate_juce_header(Mixing_Assistant_Pro)
+
+target_include_directories(Mixing_Assistant_Pro PRIVATE
+    ${CMAKE_CURRENT_BINARY_DIR}
+)
+
 target_sources(Mixing_Assistant_Pro PRIVATE
     Source/PluginProcessor.h
     Source/PluginProcessor.cpp
