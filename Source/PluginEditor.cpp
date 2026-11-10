@@ -4,25 +4,26 @@
 Mixing_Assistant_ProAudioProcessorEditor::Mixing_Assistant_ProAudioProcessorEditor (Mixing_Assistant_ProAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p),
       webView (juce::WebBrowserComponent::Options()
-               .withBackend (juce::WebBrowserComponent::Options::Backend::webview2)
-               .withResourceProvider ([] (const juce::String& url) -> std::optional<juce::WebBrowserComponent::Resource>
-               {
-                   // Intercept requests for the root or meter.html and serve the embedded binary data
-                   if (url == "/" || url == "/meter.html" || url == "meter.html")
-                   {
-                       return juce::WebBrowserComponent::Resource {
-                           (const std::byte*) BinaryData::meter_html,
-                           (size_t) BinaryData::meter_htmlSize,
-                           "text/html"
-                       };
-                   }
-                   return std::nullopt;
-               }, juce::URL("https://juce.backend")))
+                .withBackend (juce::WebBrowserComponent::Options::Backend::webview2)
+                .withResourceProvider ([] (const juce::String& url) -> std::optional<juce::WebBrowserComponent::Resource>
+                {
+                    if (url == "/" || url == "/meter.html" || url == "meter.html")
+                    {
+                        const auto* dataBegin = reinterpret_cast<const std::byte*> (BinaryData::meter_html);
+                        const auto* dataEnd = dataBegin + BinaryData::meter_htmlSize;
+
+                        return juce::WebBrowserComponent::Resource {
+                            std::vector<std::byte> { dataBegin, dataEnd },
+                            "text/html"
+                        };
+                    }
+
+                    return std::nullopt;
+                }))
 {
     addAndMakeVisible (webView);
     setSize (920, 670);
 
-    // Request the correct embedded file name
     webView.goToURL (juce::WebBrowserComponent::getResourceProviderRoot() + "meter.html");
 
     startTimerHz (60);
