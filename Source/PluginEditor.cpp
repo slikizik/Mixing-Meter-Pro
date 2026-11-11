@@ -10,14 +10,14 @@ Mixing_Assistant_ProAudioProcessorEditor::Mixing_Assistant_ProAudioProcessorEdit
                    // Serve the embedded HTML UI when requested
                    if (url == "/" || url == "/meter.html" || url == "meter.html")
                    {
+                       const auto* data = reinterpret_cast<const std::byte*> (BinaryData::meter_html);
                        return juce::WebBrowserComponent::Resource {
-                           (const std::byte*) BinaryData::meter_html,
-                           (size_t) BinaryData::meter_htmlSize,
-                           "text/html"
+                           std::vector<std::byte> (data, data + BinaryData::meter_htmlSize),
+                           juce::String { "text/html" }
                        };
                    }
                    return std::nullopt;
-               }, juce::URL("https://juce.backend")))
+               }))
 {
     addAndMakeVisible (webView);
     setSize (920, 670);
