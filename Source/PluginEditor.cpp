@@ -3,7 +3,6 @@
 
 Mixing_Assistant_ProAudioProcessorEditor::Mixing_Assistant_ProAudioProcessorEditor (Mixing_Assistant_ProAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p),
-#if JUCE_WEB_BROWSER_RESOURCE_PROVIDER_AVAILABLE
       webView (juce::WebBrowserComponent::Options()
                  .withBackend (juce::WebBrowserComponent::Options::Backend::webview2)
                  .withResourceProvider ([] (const juce::String& url) -> std::optional<juce::WebBrowserComponent::Resource>
@@ -21,19 +20,11 @@ Mixing_Assistant_ProAudioProcessorEditor::Mixing_Assistant_ProAudioProcessorEdit
 
                      return std::nullopt;
                  }))
-#else
-      webView (juce::WebBrowserComponent::Options()
-                 .withBackend (juce::WebBrowserComponent::Options::Backend::webview2))
-#endif
 {
     addAndMakeVisible (webView);
     setSize (920, 670);
 
-#if JUCE_WEB_BROWSER_RESOURCE_PROVIDER_AVAILABLE
     webView.goToURL (juce::WebBrowserComponent::getResourceProviderRoot() + "meter.html");
-#else
-    webView.goToURL ("about:blank");
-#endif
 
     startTimerHz (60);
 }
